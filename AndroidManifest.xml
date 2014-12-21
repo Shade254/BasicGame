@@ -14,4 +14,5 @@
         </activity>
         <activity android:name=".GameActivity"></activity>
     </application>
+    <uses-permission android:name="android.permission.VIBRATE"/>
 </manifest>

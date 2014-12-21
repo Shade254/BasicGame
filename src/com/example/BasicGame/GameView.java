@@ -2,10 +2,9 @@ package com.example.BasicGame;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
+import android.graphics.*;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,8 +16,7 @@ import java.util.Random;
 public class GameView  extends View implements View.OnTouchListener {
     public OneCircle[] circField;
     boolean def = false;
-    boolean runCh = false;
-    boolean runShow = false;
+
     boolean show = true;
     int lives = 3;
     int lvl = 1;
@@ -26,10 +24,15 @@ public class GameView  extends View implements View.OnTouchListener {
     public int pom;
     public int i;
     String text;
+    Vibrator vibrate;
 
 
-    public GameView(Context context) {
+    public GameView(Context context, Vibrator vib) {
         super(context);
+        vibrate = vib;
+        if(vibrate.hasVibrator()){
+            Log.e("Has vibrator", "YES");
+        }
         setOnTouchListener(this);
         init();
         i = 0;
@@ -44,14 +47,31 @@ public class GameView  extends View implements View.OnTouchListener {
         }
         super.onDraw(canvas);
         Paint paint = new Paint();
-        paint.setStyle(Paint.Style.FILL);
-        paint.setColor(Color.WHITE);
-        canvas.drawPaint(paint);
-        paintCircles(canvas, paint);
+        if(lives>0) {
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(Color.rgb(51, 204, 255));
+            canvas.drawPaint(paint);
+            paintCircles(canvas, paint);
+            paintLives(canvas, paint);
+        }
+        else{
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(Color.rgb(0, 0, 0));
+            paint.setColor(Color.RED);
+            paint.setTextSize(120);
+            canvas.drawText("GAME OVER!", getWidth() / 6, getHeight() / 2, paint);
 
+        }
 
     }
+    public void paintLives(Canvas canvas, Paint paint){
+        for(int x = 0;x<lives;x++){
+            Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.a);
+            paint.setColor(Color.RED);
+            canvas.drawBitmap(b, getWidth()/4-50+x*150, getHeight()/2+150, paint);
+        }
 
+    }
     public void paintCircles(Canvas canvas, Paint paint) {
 
         paint.setStrokeWidth(10);
@@ -101,13 +121,14 @@ public class GameView  extends View implements View.OnTouchListener {
 
             currentLvl[i] = rand.nextInt(3);
             circField[currentLvl[i]].fill = true;
-            pom = i;
             invalidate();
+
+
             Handler h = new Handler();
             h.postDelayed(new Runnable() {
                 public void run() {
 
-                    circField[currentLvl[pom]].fill = false;
+                    circField[currentLvl[i]].fill = false;
                     invalidate();
                     i++;
 
@@ -136,20 +157,26 @@ public class GameView  extends View implements View.OnTouchListener {
     public boolean onTouch(View v, MotionEvent event) {
         if(!show){
             if(getObj(event.getX(), event.getY()) == currentLvl[i]){
+                circleAnim(currentLvl[i]);
                 i++;
-                Log.e("Tag", "Got it " + i + "   " + lvl);
                 if(i==lvl){
                     lvl++;
                     show = true;
                     i = 0;
                     text = "It is show time";
                     currentLvl = new int[lvl];
-                    showLvl();
+                    Handler c = new Handler();
+                    c.postDelayed(new Runnable() {
+                        public void run() {
+                            showLvl();
+                        }
+                    }, 1000);
                 }
             }
-            else if(getObj(event.getX(), event.getY()) != -1){
+            else if(getObj(event.getX(), event.getY()) != -1 && lives>0){
+                vibrate.vibrate(200);
                 lives--;
-                Log.e("Tag", "Miss " + lives);
+                i = 0;
                 if(lives<=0){
                    text = "You have lost";
                     invalidate();
@@ -157,10 +184,11 @@ public class GameView  extends View implements View.OnTouchListener {
                 }
             }
             else{
-                Log.e("Tag", "You missed");
+
             }
 
         }
+        invalidate();
         return false;
     }
     public int getObj(float x, float y){
@@ -181,4 +209,19 @@ public class GameView  extends View implements View.OnTouchListener {
         }
 
     }
+    public void circleAnim(int which){
+        circField[which].fill = true;
+        invalidate();
+
+        pom = which;
+        Handler h = new Handler();
+        h.postDelayed(new Runnable() {
+            public void run() {
+                circField[pom].fill = false;
+                invalidate();
+            }
+        }, 200);
+
+    }
+
 }

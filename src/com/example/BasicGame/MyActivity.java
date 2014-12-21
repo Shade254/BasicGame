@@ -3,6 +3,7 @@ package com.example.BasicGame;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -22,9 +23,11 @@ public class MyActivity extends Activity {
         setContentView(R.layout.main);
         next = (Button)findViewById(R.id.button);
         tv = (TextView)findViewById(R.id.textView);
+        tv.setTypeface(Typeface.SERIF);
+        tv.setTextSize(25);
         tv.setTextColor(Color.BLACK);
         l = (LinearLayout)findViewById(R.id.a);
-        l.setBackgroundColor(Color.CYAN);
+        l.setBackgroundColor(Color.rgb(51,204,255));
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -9,10 +9,10 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="It is game, which is old as time itself. Rules are simple, but your quest here is not. It is about clicking at the circles in the same way as I will show you, BUT it is not as funny as it might seems to be...you will do three mistakes and you are DEAD!"
-            android:id="@+id/textView" android:layout_gravity="center_horizontal"/>
+            android:id="@+id/textView" android:layout_gravity="center_horizontal" android:layout_weight="0.96"/>
     <Button
-            android:layout_width="143dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Next"
-            android:id="@+id/button" android:layout_gravity="center_horizontal" android:layout_weight="0.07"/>
+            android:id="@+id/button" android:layout_weight="0.07"/>
 </LinearLayout>
